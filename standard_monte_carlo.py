@@ -34,6 +34,21 @@ class CashOrNothing_DownAndOut_Put:
 
         return self.crossed_barrier
 
+    def check_bridge(self, S_prev, S_next, delta_t, sigma):
+
+        if self.check_barrier(S_next): 
+            return True 
+
+        p_n = np.exp(-2 * (S_prev - self.B) * (S_next - self.B) / (sigma**2 * S_prev**2 * delta_t))
+
+
+        if np.random.uniform() < p_n:
+            self.crossed_barrier = True
+
+        return self.crossed_barrier
+        
+        
+
     def reset(self):
         self.crossed_barrier = False
 
@@ -176,3 +191,24 @@ def valor_exacto(S, r, sigma, B, K, X, T):
     c4 = D * (B / S)**(2 * lam - 2) * norm.cdf(eta * y1 - eta * v)
 
     return c1 - c2 + c3 - c4
+
+
+def improved_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put):
+
+    delta_t = option.T / N
+    sum_payoffs = 0
+
+    option.reset()
+    if option.check_barrier(S):
+        return 0
+
+    for _ in range(M):
+        S_n = S
+        for _ in range(N):
+            S_n *= np.exp((r - 0.5 * sigma ** 2) * delta_t +
+                          sigma * np.sqrt(delta_t) * np.random.normal())
+            if option.check_barrier(S_n):
+                break
+        sum_payoffs += option.payoff(S_n) * np.exp(-r * option.T)
+        option.reset()
+    return sum_payoffs / M
