@@ -11,11 +11,9 @@ Se incluye también la función theoretical_price, que calcula el precio teóric
 
 import numpy as np
 from scipy.stats import norm
-from options import CashOrNothing_DownAndOut_Put
 
 
-
-def standard_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put):
+def standard_monte_carlo(M, N, S, r, sigma, B, K, x, T):
     """
     Valora una opción digital cash-or-nothing down-and-out put mediante simulación de Monte Carlo estándar.
 
@@ -30,29 +28,36 @@ def standard_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put
         Tasa libre de riesgo.
     sigma: float
         Volatilidad del subyacente.
-    option: CashOrNothing_DownAndOut_Put
-        Instancia de la opción a valorar.
+    B: float
+            Barrera de la opción.
+    K: float
+        Strike de la opción.
+    x: float
+        Pago de la opción.
+    T: float
+        Tiempo hasta la expiración.
 
     Retorna: float
         Prima estimada de la opción. 
     """
 
-    delta_t = option.T / N
+    delta_t = T / N
     sum_payoffs = 0
 
-    option.reset()
-    if option.check_barrier(S):
+    if S <= B:
         return 0
 
     for _ in range(M):
         S_n = S
+        crossed_barrier = False
         for _ in range(N):
             S_n *= np.exp((r - 0.5 * sigma ** 2) * delta_t +
                           sigma * np.sqrt(delta_t) * np.random.normal())
-            if option.check_barrier(S_n):
+            if S_n <= B:
+                crossed_barrier = True
                 break
-        sum_payoffs += option.payoff(S_n) * np.exp(-r * option.T)
-        option.reset()
+        if not crossed_barrier and S_n < K:
+            sum_payoffs += x * np.exp(-r * T)
     return sum_payoffs / M
 
 
@@ -153,4 +158,3 @@ def valor_exacto(S, r, sigma, B, K, X, T):
     c4 = D * (B / S)**(2 * lam - 2) * norm.cdf(eta * y1 - eta * v)
 
     return c1 - c2 + c3 - c4
-

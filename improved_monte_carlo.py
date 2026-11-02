@@ -1,9 +1,7 @@
 import numpy as np
-from options import CashOrNothing_DownAndOut_Put
 
 
-
-def improved_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put):
+def improved_monte_carlo(M, N, S, r, sigma, B, K, x, T):
     """
     Valora una opción digital cash-or-nothing down-and-out put mediante simulación de Monte Carlo estándar.
 
@@ -18,34 +16,47 @@ def improved_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put
         Tasa libre de riesgo.
     sigma: float
         Volatilidad del subyacente.
-    option: CashOrNothing_DownAndOut_Put
-        Instancia de la opción a valorar.
+    B: float
+        Barrera de la opción.
+    K: float
+        Strike de la opción.
+    x: float
+        Pago de la opción.
+    T: float
+        Tiempo hasta la expiración.
 
     Retorna: float
         Prima estimada de la opción. 
     """
 
-    delta_t = option.T / N
+    delta_t = T / N
     sum_payoffs = 0
 
-    option.reset()
-    if option.check_barrier(S):
+    if S <= B:
         return 0
 
     for _ in range(M):
         S_prev = S
+        crossed_barrier = False
         for _ in range(N):
             S_next = S_prev * np.exp((r - 0.5 * sigma ** 2) * delta_t +
                           sigma * np.sqrt(delta_t) * np.random.normal())
 
-            if option.check_bridge(S_prev, S_next, delta_t, sigma):
+            if S_next <= B: 
+                crossed_barrier = True
                 break
+            else:
+                p_n = np.exp(-2 * (S_prev - B) * (S_next - B) / (sigma**2 * S_prev**2 * delta_t))
+        
+                if np.random.uniform() < p_n:
+                    crossed_barrier = True
+                    break
 
             S_prev = S_next
             
-            
-        sum_payoffs += option.payoff(S_next) * np.exp(-r * option.T)
-        option.reset()
+        if not crossed_barrier and S_prev < K:
+            sum_payoffs += x * np.exp(-r * T)
+
 
     return sum_payoffs / M
 
