@@ -48,3 +48,7 @@ def improved_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put
         option.reset()
 
     return sum_payoffs / M
+
+
+def vec_standard_monte_carlo(M, N, S, r, sigma, B, K, x, T, batch_size=10000):
+    pass
