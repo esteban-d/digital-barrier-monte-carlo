@@ -1,5 +1,6 @@
 import numpy as np
-from standard_monte_carlo import CashOrNothing_DownAndOut_Put
+from options import CashOrNothing_DownAndOut_Put
+
 
 
 def improved_monte_carlo(M, N, S, r, sigma, option: CashOrNothing_DownAndOut_Put):
