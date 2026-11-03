@@ -1,15 +1,12 @@
 import time
-
 import numpy as np
 import matplotlib.pyplot as plt
 
 from standard_monte_carlo import vec_standard_monte_carlo
 from improved_monte_carlo import vec_improved_monte_carlo
 
-DEF_SEED = 1234
 
-
-def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed=DEF_SEED, file_name="convergencia_N.pdf"):
+def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed, file_name="convergencia_N.pdf"):
     primas_std = []
     primas_mejorado = []
 
@@ -39,6 +36,8 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed=
     ax1.set_xlabel("Número de pasos (N)")
     ax1.set_ylabel("Prima")
     ax1.title.set_text("Prima")
+    ax1.set_xscale("log")
+    ax1.set_yscale("log")
     ax1.legend()
 
     ax2.plot(Ns, err_std, marker=".", label="Estándar")
@@ -46,6 +45,8 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed=
     ax2.set_xlabel("Número de pasos (N)")
     ax2.set_ylabel("Error absoluto")
     ax2.title.set_text("Error")
+    ax2.set_xscale("log")
+    ax1.set_yscale("log")
     ax2.legend()
 
     fig.tight_layout()
@@ -65,7 +66,7 @@ K = 102
 x = 15
 
 
-def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_reps=30, seed=DEF_SEED, file_name="convergencia_M.pdf"):
+def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, seed, n_reps=30, file_name="convergencia_M.pdf"):
 
     err_std = np.empty((len(Ms), n_reps))
     err_mej = np.empty((len(Ms), n_reps))
@@ -96,13 +97,13 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
 
     media_mej = err_mej.mean(axis=1)
     c = media_mej[0] * np.sqrt(Ms[0])
-    ax.plot(Ms, c/np.sqrt(Ms), "k--", label=r"$Referencia 1/\sqrt{M}$")
+    ax.plot(Ms, c/np.sqrt(Ms), "k--", label=r"Referencia $1/\sqrt{M}$")
 
+    ax.title.set_text(f"Error (N={N})")
     ax.set_xlabel("Número de simulaciones (M)")
     ax.set_ylabel("Error absoluto")
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.title.set_text(f"Error (N={N})")
     ax.legend()
 
     fig.tight_layout()
@@ -111,7 +112,7 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
     return fig
 
 
-def graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_reps=10, seed=DEF_SEED, file_name="convergencia_tiempos_ejecucion.pdf"):
+def graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, seed, n_reps=10 , file_name="convergencia_tiempos_ejecucion.pdf"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado": vec_improved_monte_carlo
@@ -139,6 +140,8 @@ def graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_
 
     ax.set_xlabel("Número de simulaciones (M)")
     ax.set_ylabel("Tiempo medio (segundos)")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
     ax.legend()
 
     fig.tight_layout()
