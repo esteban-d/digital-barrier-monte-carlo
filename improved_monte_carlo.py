@@ -40,27 +40,29 @@ def improved_monte_carlo(M, N, S, r, sigma, B, K, x, T):
         crossed_barrier = False
         for _ in range(N):
             S_next = S_prev * np.exp((r - 0.5 * sigma ** 2) * delta_t +
-                          sigma * np.sqrt(delta_t) * np.random.normal())
+                                     sigma * np.sqrt(delta_t) * np.random.normal())
 
-            if S_next <= B: 
+            if S_next <= B:
                 crossed_barrier = True
                 break
             else:
-                p_n = np.exp(-2 * (S_prev - B) * (S_next - B) / (sigma**2 * S_prev**2 * delta_t))
-        
+                p_n = np.exp(-2 * (S_prev - B) * (S_next - B) /
+                             (sigma**2 * S_prev**2 * delta_t))
+
                 if np.random.uniform() < p_n:
                     crossed_barrier = True
                     break
 
             S_prev = S_next
-            
+
         if not crossed_barrier and S_prev < K:
             sum_payoffs += x * np.exp(-r * T)
-
 
     return sum_payoffs / M
 
 # p_n = np.exp(-2 * (S_prev - self.B) * (S_next - self.B) / (sigma**2 * S_prev**2 * delta_t))
+
+
 def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
 
     Z = np.random.normal(size=(M_batch, N))
@@ -72,7 +74,8 @@ def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
     paths[:, 0] = S
     paths[:, 1:] = S * np.cumprod(factors, axis=1)
 
-    exceeded_barrier_p = np.exp(-2 * (paths[:, :-1] - B) * (paths[:, 1:] - B) / (sigma**2 * paths[:, :-1]**2 * delta_t))
+    exceeded_barrier_p = np.exp(-2 * (paths[:, :-1] - B) * (
+        paths[:, 1:] - B) / (sigma**2 * paths[:, :-1]**2 * delta_t))
 
     mask = (paths[:, :-1] >= B) & (paths[:, 1:] >= B)
 
