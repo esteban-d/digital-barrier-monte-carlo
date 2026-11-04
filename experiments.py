@@ -1,15 +1,15 @@
 from standard_monte_carlo import vec_standard_monte_carlo
 from improved_monte_carlo import vec_improved_monte_carlo
-from graphs import graficar_convergencia_M, graficar_convergencia_N, graficar_tiempos_ejecucion
+from graphs import graficar_convergencia_M, graficar_convergencia_N, graficar_tiempos_ejecucion_M, graficar_eficiencia_N, graficar_tiempos_ejecucion_N
 from exact_value import valor_exacto
 
 import numpy as np
 
 
-DEF_SEED = 1234
+DEF_SEED = 123
 
 # Parámetros del la opción elegida
-M = 100000  # Número de simulaciones
+M = 1000000  # Número de simulaciones
 N = 50      # Número de pasos de tiempo
 S = 105     # Precio inicial del subyacente
 r = 0.1     # Tasa libre de riesgo
@@ -28,8 +28,6 @@ def calcular_prima_ejemplo():
     Estima la prima de una opción digital de tipo cash-or-nothing down-and-out put utilizando los parámetros 
     del Ejemplo 1 de Nouri et al. (2016).
     """
-
-    np.random.seed(40)
     
     price_vec = vec_standard_monte_carlo(
         M=M, N=N, S=S, r=r, sigma=sigma, B=B, K=K, x=x, T=T)
@@ -48,25 +46,41 @@ def calcular_prima_ejemplo():
         f"Error relativo Monte Carlo mejorado: {abs(price_improved - price_theoretical) / price_theoretical * 100:.4f}%")
 
 
-def graficar_convergecia_N_ejemplo():
-    Ns = np.array([5, 10, 20, 50, 100, 200, 500, 1000])
-    fig = graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, V, seed=DEF_SEED)
+def graficar_convergecia_N_ejemplo(dots=20):
+    Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
+    fig = graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, V)
     print("Gráfico convergecia_N generado")
 
-def graficar_convergecia_M_ejemplo():
+def graficar_convergecia_M_ejemplo(dots=10):
     Ms = np.unique(np.geomspace(1_000, 1_000_000, 10).astype(int))
-    fig = graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, V, seed=DEF_SEED)
+    fig = graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, V)
     print("Gráfico tiempos_de_ejecucion generado")
         
 
-
-def graficar_tiempos_ejecucion_ejemplo():
+def graficar_tiempos_ejecucion_M_ejemplo(dots=10):
     Ms = np.unique(np.geomspace(1_000, 1_000_000, 10).astype(int))
-    fig = graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, V, seed=DEF_SEED)
+    fig = graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T)
     print("Gráfico tiempos_de_ejecucion generado")
-        
+
+def graficar_tiempos_ejecucion_N_ejemplo(dots=20): 
+
+    Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
+    fig = graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T)
+    print("Gráfico tiempos_de_ejecucion generado")
+
+
+def graficar_eficiencia_N_ejemplo(dots=8):
+    Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
+    fig = graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, V, n_reps=1)
+    print("Gráfico eficiencia_N generado")
+
 
 if __name__ == "__main__":
+    np.random.seed(DEF_SEED)
+
     graficar_convergecia_N_ejemplo()
     graficar_convergecia_M_ejemplo()
-    graficar_tiempos_ejecucion_ejemplo()
+    graficar_tiempos_ejecucion_M_ejemplo()
+    graficar_tiempos_ejecucion_N_ejemplo()
+    graficar_eficiencia_N_ejemplo()
+

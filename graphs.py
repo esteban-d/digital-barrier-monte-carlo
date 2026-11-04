@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 
 from standard_monte_carlo import vec_standard_monte_carlo
 from improved_monte_carlo import vec_improved_monte_carlo
+from pathlib import Path
 
 
-def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed, file_name="convergencia_N.pdf"):
+def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, file_name="results/convergencia_N.pdf"):
     primas_std = []
     primas_mejorado = []
 
@@ -15,10 +16,10 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed,
 
     for i, N in enumerate(Ns):
 
-        np.random.seed(seed+i)
+        print(f"Graficando convergencia respecto a N: Simulando N={N}.")
+
         prima_std = vec_standard_monte_carlo(M, N, S, r, sigma, B, K, x, T)
 
-        np.random.seed(seed+i)
         prima_mejorado = vec_improved_monte_carlo(
             M, N, S, r, sigma, B, K, x, T)
 
@@ -37,8 +38,11 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed,
     ax1.set_ylabel("Prima")
     ax1.title.set_text("Prima")
     ax1.set_xscale("log")
-    ax1.set_yscale("log")
+    #ax1.set_yscale("log")
     ax1.legend()
+
+    c_N = err_std[0] * np.sqrt(Ns[0])
+    ax2.plot(Ns, c_N / np.sqrt(Ns), "k--", label=r"Referencia $1/\sqrt{N}$")
 
     ax2.plot(Ns, err_std, marker=".", label="Estándar")
     ax2.plot(Ns, err_mejorado, marker=".", label="Mejorado")
@@ -46,27 +50,19 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, seed,
     ax2.set_ylabel("Error absoluto")
     ax2.title.set_text("Error")
     ax2.set_xscale("log")
-    ax1.set_yscale("log")
+    ax2.set_yscale("log")
     ax2.legend()
 
+
     fig.tight_layout()
+
+    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(file_name)
 
     return fig
 
 
-M = 100000  # Número de trayectorias
-N = 40      # Número de pasos de tiempo
-S = 105     # Precio inicial del subyacente
-r = 0.1     # Tasa libre de riesgo
-sigma = 0.2  # Volatilidad del subyacente
-T = 0.5     # Tiempo hasta el vencimiento
-B = 100
-K = 102
-x = 15
-
-
-def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, seed, n_reps=30, file_name="convergencia_M.pdf"):
+def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_reps=30, file_name="results/convergencia_M.pdf"):
 
     err_std = np.empty((len(Ms), n_reps))
     err_mej = np.empty((len(Ms), n_reps))
@@ -75,12 +71,10 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, seed,
 
         for rep in range(n_reps):
 
-            iter_seed = seed + rep
+            print(f"Graficando convergencia M: Simulando M={M}, repeticion {rep}.")
 
-            np.random.seed(iter_seed)
             prima_std = vec_standard_monte_carlo(M, N, S, r, sigma, B, K, x, T)
 
-            np.random.seed(iter_seed)
             prima_mejorado = vec_improved_monte_carlo(
                 M, N, S, r, sigma, B, K, x, T)
 
@@ -107,12 +101,14 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, seed,
     ax.legend()
 
     fig.tight_layout()
+
+    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(file_name)
 
     return fig
 
 
-def graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, seed, n_reps=10 , file_name="convergencia_tiempos_ejecucion.pdf"):
+def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , file_name="results/convergencia_tiempos_ejecucion_M.pdf"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado": vec_improved_monte_carlo
@@ -124,8 +120,9 @@ def graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, se
         for M in Ms:
             tiempos_M = []
 
-            for repeticion in range(n_reps):
-                np.random.seed(seed+repeticion)
+            for i in range(n_reps):
+
+                print(f"Graficando tiempos de ejecución M: Simulando M={M}, repeticion {i}. Método {nombre}.")
 
                 inicio = time.perf_counter()
                 metodo(M, N, S, r, sigma, B, K, x, T)
@@ -146,6 +143,97 @@ def graficar_tiempos_ejecucion(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, se
 
     fig.tight_layout()
 
+
+    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(file_name)
+
+    return fig
+
+
+def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_name="results/convergencia_tiempos_ejecucion_N.pdf"):
+    metodos = {
+        "Estándar": vec_standard_monte_carlo,
+        "Mejorado": vec_improved_monte_carlo
+    }
+
+    tiempos = {nombre: [] for nombre in metodos}
+
+    for nombre, metodo in metodos.items():
+        for N in Ns:
+            tiempos_M = []
+
+            for i in range(n_reps):
+                print(f"Graficando tiempos de ejecución N: Simulando N={N}, repeticion {i+1}. Método {nombre}.")
+                inicio = time.perf_counter()
+                metodo(M, N, S, r, sigma, B, K, x, T)
+                tiempos_M.append(time.perf_counter() - inicio)
+
+            tiempos[nombre].append(np.mean(tiempos_M))
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+
+    for nombre, valores in tiempos.items():
+        ax.plot(Ns, valores, marker="o", label=nombre)
+
+    ax.set_xlabel("Número de pasos (N)")
+    ax.set_ylabel("Tiempo medio (segundos)")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.legend()
+
+    fig.tight_layout()
+
+    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(file_name)
+
+    return fig
+
+
+def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=3, file_name="results/eficiencia_error_tiempo.pdf"):
+    metodos = {
+        "Estándar": vec_standard_monte_carlo,
+        "Mejorado":vec_improved_monte_carlo
+    }
+
+    tiempos = {nombre: [] for nombre in metodos}
+    errores = {nombre: [] for nombre in metodos}
+
+    for nombre, metodo in metodos.items():
+        for N in Ns:
+            t_reps = []
+            err_reps = []
+            for i in range(n_reps):
+                print(f"Graficando eficiencia N: Simulando N={N}, repeticion {i}. Método {nombre}.")
+
+                inicio = time.perf_counter()
+                prima = metodo(M, N, S, r, sigma, B, K, x, T)
+                t_reps.append(time.perf_counter() - inicio)
+                err_reps.append(np.abs(prima - prima_teorica))
+
+            tiempos[nombre].append(np.mean(t_reps))
+            errores[nombre].append(np.mean(err_reps))
+    fig, ax = plt.subplots(figsize=(7,5))
+
+    for nombre in metodos:
+        ax.plot(tiempos[nombre], errores[nombre], marker=".", label=nombre)
+
+    for nombre in metodos:
+        ax.annotate(f"N={Ns[0]}", (tiempos[nombre][0], errores[nombre][0]), 
+                    textcoords="offset points", xytext=(5,5), fontsize=8)
+
+        ax.annotate(f"N={Ns[-1]}", (tiempos[nombre][-1], errores[nombre][-1]),
+                    textcoords="offset points", xytext=(-25, 8), fontsize=8)
+
+    ax.set_xlabel("Tiempo medio de ejecución (segundos)")
+    ax.set_ylabel("Error absoluto medio")
+    ax.set_title(f"Eficiencia computacional variando N (M={M})")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.legend()
+
+    fig.tight_layout()
+
+    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(file_name)
 
     return fig
