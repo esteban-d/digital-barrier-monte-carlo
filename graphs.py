@@ -189,6 +189,70 @@ def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_
     return fig
 
 
+def graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=15, N_alto=2000,
+                                max_intentos=500_000, seed=None,
+                                file_name="results/deteccion_ejemplo.pdf"):
+    # busca una trayectoria donde el estándar (dots puntos) no detecte ningún cruce,
+    # pero la misma simulación con N_alto sí haya cruzado la barrera en algún punto
+    delta_t_N_alto = T / N_alto
+    delta_t = T / dots
+    idx = np.linspace(0, N_alto, dots + 1).astype(int)
+
+    rng_master = np.random.default_rng(seed)
+
+    for _ in range(max_intentos):
+        rng = np.random.default_rng(rng_master.integers(1 << 32))
+        Z = rng.normal(size=N_alto)
+        log_returns = (r - 0.5 * sigma ** 2) * delta_t_N_alto + sigma * np.sqrt(delta_t_N_alto) * Z
+        path_N_alto = np.concatenate(([S], S * np.exp(np.cumsum(log_returns))))
+        path = path_N_alto[idx]
+
+        if np.any(path <= B) or not np.any(path_N_alto <= B):
+            continue
+
+        seg = np.searchsorted(idx, np.argmin(path_N_alto)) - 1
+        if not (0 <= seg < dots):
+            continue
+
+        S_n, S_next = path[seg], path[seg + 1]
+        p_n = np.exp(-2 * (S_n - B) * (S_next - B) / (sigma ** 2 * S_n ** 2 * delta_t))
+        U = rng.uniform()
+
+        if U < p_n and p_n > 0.3:
+            break
+    else:
+        raise RuntimeError("No se encontró una trayectoria de ejemplo adecuada.")
+
+    t_N_alto = np.linspace(0, T, N_alto + 1)
+    t = t_N_alto[idx]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    ax.plot(t_N_alto, path_N_alto, color="tab:blue", linewidth=1, alpha=0.8,
+            label=f"Monte Carlo sin mejorar, con $N={N_alto}$")
+    ax.plot(t, path, "o-", color="tab:orange", markersize=5,
+            label=f"Monte Carlo sin mejorar: puntos observados ($N={dots}$)")
+    ax.plot(t[seg:seg+2], path[seg:seg+2], "o-", color="tab:red",
+            linewidth=2.5, zorder=5,
+            label=f"Monte Carlo mejorado ($N={dots}$): cruce detectado ($p_n={p_n:.2f}$)")
+    ax.axhline(B, linestyle="--", color="gray", label="Barrera $B$")
+
+    cruce = path_N_alto <= B
+    ax.fill_between(t_N_alto, B, path_N_alto, where=cruce, color="red", alpha=0.15)
+
+    ax.set_xlabel("Tiempo $t$")
+    ax.set_ylabel("Precio del activo $S_t$")
+    ax.set_title("Detección del cruce de barrera: estándar vs. mejorado")
+    ax.legend(fontsize=9, loc="lower right")
+
+    fig.tight_layout()
+
+    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(file_name)
+
+    return fig
+
+
 def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=3, file_name="results/eficiencia_error_tiempo.pdf"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,

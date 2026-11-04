@@ -1,6 +1,6 @@
 from standard_monte_carlo import vec_standard_monte_carlo
 from improved_monte_carlo import vec_improved_monte_carlo
-from graphs import graficar_convergencia_M, graficar_convergencia_N, graficar_tiempos_ejecucion_M, graficar_eficiencia_N, graficar_tiempos_ejecucion_N
+from graphs import graficar_convergencia_M, graficar_convergencia_N, graficar_tiempos_ejecucion_M, graficar_eficiencia_N, graficar_tiempos_ejecucion_N, graficar_deteccion_ejemplo
 from exact_value import valor_exacto
 
 import numpy as np
@@ -75,6 +75,11 @@ def graficar_eficiencia_N_ejemplo(dots=8):
     print("Gráfico eficiencia_N generado")
 
 
+def graficar_deteccion_ejemplo_ejemplo(dots=15):
+    fig = graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=dots, seed=22)
+    print("Gráfico deteccion_ejemplo generado")
+
+
 if __name__ == "__main__":
     np.random.seed(DEF_SEED)
 
@@ -83,4 +88,5 @@ if __name__ == "__main__":
     graficar_tiempos_ejecucion_M_ejemplo()
     graficar_tiempos_ejecucion_N_ejemplo()
     graficar_eficiencia_N_ejemplo()
+    graficar_deteccion_ejemplo_ejemplo()
 
