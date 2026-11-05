@@ -7,6 +7,14 @@ from standard_monte_carlo import vec_standard_monte_carlo
 from improved_monte_carlo import vec_improved_monte_carlo
 from pathlib import Path
 
+plt.rcParams.update({
+    "axes.titlesize": 17,
+    "axes.labelsize": 16,
+    "xtick.labelsize": 13,
+    "ytick.labelsize": 13,
+    "legend.fontsize": 13,
+})
+
 DEFAULT_RESULTS_DIR = "results"
 DEFAULT_RESULTS_TABLES = "tables" 
 
@@ -122,7 +130,7 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
 
     ax.title.set_text(f"Error (N={N})")
     ax.set_xlabel("Número de simulaciones (M)")
-    ax.set_ylabel("Error absoluto")
+    ax.set_ylabel("Error absoluto medio")
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.legend()
@@ -163,7 +171,7 @@ def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , fil
         ax.plot(Ms, valores, marker="o", label=nombre)
 
     ax.set_xlabel("Número de simulaciones (M)")
-    ax.set_ylabel("Tiempo medio (segundos)")
+    ax.set_ylabel("Tiempo medio de ejecución (s)")
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.legend()
@@ -202,7 +210,7 @@ def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_
         ax.plot(Ns, valores, marker="o", label=nombre)
 
     ax.set_xlabel("Número de pasos (N)")
-    ax.set_ylabel("Tiempo medio (segundos)")
+    ax.set_ylabel("Tiempo medio de ejecución (s)")
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.legend()
@@ -314,9 +322,9 @@ def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=
         ax.annotate(f"N={Ns[-1]}", (tiempos[nombre][-1], errores[nombre][-1]),
                     textcoords="offset points", xytext=(-25, 8), fontsize=8)
 
-    ax.set_xlabel("Tiempo medio de ejecución (segundos)")
+    ax.set_xlabel("Tiempo medio de ejecución (s)")
     ax.set_ylabel("Error absoluto medio")
-    ax.set_title(f"Eficiencia computacional variando N (M={M})")
+    ax.set_title(f"Error frente al tiempo de ejecución (M={M})")
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.legend()
