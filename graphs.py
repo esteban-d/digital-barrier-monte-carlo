@@ -1,13 +1,39 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 
 from standard_monte_carlo import vec_standard_monte_carlo
 from improved_monte_carlo import vec_improved_monte_carlo
 from pathlib import Path
 
+DEFAULT_RESULTS_DIR = "results"
+DEFAULT_RESULTS_TABLES = "tables" 
 
-def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, file_name="results/convergencia_N.pdf"):
+results_dir = Path(DEFAULT_RESULTS_DIR)
+tables_dir = Path(DEFAULT_RESULTS_TABLES)
+results_dir.mkdir(exist_ok=True)
+tables_dir.mkdir(exist_ok=True)
+
+def save_csv(x_variable_name, x, y1, y2, file_name):
+
+    path = tables_dir/f"{file_name}.csv"
+
+    with path.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow([x_variable_name, "Estándar", "Mejorado"])
+        writer.writerows(zip(x, y1, y2))
+
+def save_csv_single_column(x_variable_name, x, y, method_name, file_name):
+
+    path = tables_dir/f"{file_name}.csv"
+
+    with path.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow([x_variable_name, method_name])
+        writer.writerows(zip(x, y))
+
+def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, file_name="convergencia_N"):
     primas_std = []
     primas_mejorado = []
 
@@ -53,16 +79,16 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, file_
     ax2.set_yscale("log")
     ax2.legend()
 
-
     fig.tight_layout()
+    fig.savefig(results_dir/f"{file_name}.pdf")
 
-    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(file_name)
+    save_csv("N", Ns, primas_std, primas_mejorado, f"{file_name}_primas")
+    save_csv("N", Ns, err_std, err_mejorado, f"{file_name}_err")
 
     return fig
 
 
-def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_reps=30, file_name="results/convergencia_M.pdf"):
+def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_reps=30, file_name="convergencia_M"):
 
     err_std = np.empty((len(Ms), n_reps))
     err_mej = np.empty((len(Ms), n_reps))
@@ -89,8 +115,9 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
         color = ax.plot(Ms, media, marker=".", label=label)[0].get_color()
         ax.fill_between(Ms, p25, p75, alpha=0.3, color=color)
 
-    media_mej = err_mej.mean(axis=1)
-    c = media_mej[0] * np.sqrt(Ms[0])
+    media_err_std = err_std.mean(axis=1)
+    media_err_mej = err_mej.mean(axis=1)
+    c = media_err_mej[0] * np.sqrt(Ms[0])
     ax.plot(Ms, c/np.sqrt(Ms), "k--", label=r"Referencia $1/\sqrt{M}$")
 
     ax.title.set_text(f"Error (N={N})")
@@ -101,14 +128,14 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
     ax.legend()
 
     fig.tight_layout()
+    fig.savefig(results_dir/f"{file_name}.pdf")
 
-    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(file_name)
+    save_csv("M", Ms, media_err_std, media_err_mej, f"{file_name}_err")
 
     return fig
 
 
-def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , file_name="results/convergencia_tiempos_ejecucion_M.pdf"):
+def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , file_name="convergencia_tiempos_ejecucion_M"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado": vec_improved_monte_carlo
@@ -142,15 +169,14 @@ def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , fil
     ax.legend()
 
     fig.tight_layout()
+    fig.savefig(results_dir/f"{file_name}.pdf")
 
-
-    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(file_name)
+    save_csv("M", Ms, tiempos["Estándar"], tiempos["Mejorado"], f"{file_name}_time")
 
     return fig
 
 
-def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_name="results/convergencia_tiempos_ejecucion_N.pdf"):
+def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_name="convergencia_tiempos_ejecucion_N"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado": vec_improved_monte_carlo
@@ -182,16 +208,16 @@ def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_
     ax.legend()
 
     fig.tight_layout()
+    fig.savefig(results_dir / f"{file_name}.pdf")
 
-    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(file_name)
+    save_csv("N", Ns, tiempos["Estándar"], tiempos["Mejorado"], f"{file_name}_time")
 
     return fig
 
 
 def graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=15, N_alto=2000,
                                 max_intentos=500_000, seed=None,
-                                file_name="results/deteccion_ejemplo.pdf"):
+                                file_name="deteccion_ejemplo"):
     # busca una trayectoria donde el estándar (dots puntos) no detecte ningún cruce,
     # pero la misma simulación con N_alto sí haya cruzado la barrera en algún punto
     delta_t_N_alto = T / N_alto
@@ -246,14 +272,12 @@ def graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=15, N_alto=2000,
     ax.legend(fontsize=9, loc="lower right")
 
     fig.tight_layout()
-
-    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(file_name)
+    fig.savefig(results_dir/f"{file_name}.pdf")
 
     return fig
 
 
-def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=3, file_name="results/eficiencia_error_tiempo.pdf"):
+def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=3, file_name="eficiencia_error_tiempo"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado":vec_improved_monte_carlo
@@ -280,6 +304,8 @@ def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=
 
     for nombre in metodos:
         ax.plot(tiempos[nombre], errores[nombre], marker=".", label=nombre)
+        save_csv_single_column("Tiempo medio (s)", tiempos[nombre], errores[nombre], f"Error absoluto medio {nombre}", f"{file_name}_{nombre.lower()}_efficiency")
+        
 
     for nombre in metodos:
         ax.annotate(f"N={Ns[0]}", (tiempos[nombre][0], errores[nombre][0]), 
@@ -296,8 +322,6 @@ def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=
     ax.legend()
 
     fig.tight_layout()
-
-    Path(file_name).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(file_name)
+    fig.savefig(results_dir/f"{file_name}.pdf")
 
     return fig
