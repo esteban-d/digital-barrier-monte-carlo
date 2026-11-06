@@ -105,7 +105,7 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
 
         for rep in range(n_reps):
 
-            print(f"Graficando convergencia M: Simulando M={M}, repeticion {rep}.")
+            print(f"Graficando convergencia M: Simulando M={M}, repeticion {rep+1}.")
 
             prima_std = vec_standard_monte_carlo(M, N, S, r, sigma, B, K, x, T)
 
@@ -143,7 +143,7 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
     return fig
 
 
-def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , file_name="convergencia_tiempos_ejecucion_M"):
+def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , file_name="tiempos_ejecucion_M"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado": vec_improved_monte_carlo
@@ -172,8 +172,6 @@ def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , fil
 
     ax.set_xlabel("Número de simulaciones (M)")
     ax.set_ylabel("Tiempo medio de ejecución (s)")
-    ax.set_xscale("log")
-    ax.set_yscale("log")
     ax.legend()
 
     fig.tight_layout()
@@ -184,7 +182,7 @@ def graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T, n_reps=10 , fil
     return fig
 
 
-def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_name="convergencia_tiempos_ejecucion_N"):
+def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=5, file_name="tiempos_ejecucion_N"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado": vec_improved_monte_carlo
@@ -199,7 +197,11 @@ def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_
             for i in range(n_reps):
                 print(f"Graficando tiempos de ejecución N: Simulando N={N}, repeticion {i+1}. Método {nombre}.")
                 inicio = time.perf_counter()
-                metodo(M, N, S, r, sigma, B, K, x, T)
+                # Elegimos batch_size=4000 para evitar que el asignador de memoria
+                # genere saltos en el tiempo de ejecución
+                # que no reflejan la eficiencia del método.
+                # (Notar que el tamaño de las matrices disminuye con batch_size.)
+                metodo(M, N, S, r, sigma, B, K, x, T, batch_size=4000)
                 tiempos_M.append(time.perf_counter() - inicio)
 
             tiempos[nombre].append(np.mean(tiempos_M))
@@ -211,8 +213,6 @@ def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=1, file_
 
     ax.set_xlabel("Número de pasos (N)")
     ax.set_ylabel("Tiempo medio de ejecución (s)")
-    ax.set_xscale("log")
-    ax.set_yscale("log")
     ax.legend()
 
     fig.tight_layout()

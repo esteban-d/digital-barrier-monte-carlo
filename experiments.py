@@ -58,20 +58,19 @@ def graficar_convergecia_M_ejemplo(dots=10):
         
 
 def graficar_tiempos_ejecucion_M_ejemplo(dots=10):
-    Ms = np.unique(np.geomspace(1_000, 1_000_000, 10).astype(int))
+    Ms = np.arange(1_000, 1_000_001, 100_000)
     fig = graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T)
     print("Gráfico tiempos_de_ejecucion generado")
 
 def graficar_tiempos_ejecucion_N_ejemplo(dots=20): 
-
-    Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
+    Ns = np.arange(5, 1001, 50)
     fig = graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T)
     print("Gráfico tiempos_de_ejecucion generado")
 
 
 def graficar_eficiencia_N_ejemplo(dots=8):
     Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
-    fig = graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, V, n_reps=1)
+    fig = graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, V)
     print("Gráfico eficiencia_N generado")
 
 
@@ -83,10 +82,10 @@ def graficar_deteccion_ejemplo_ejemplo(dots=15):
 if __name__ == "__main__":
     np.random.seed(DEF_SEED)
 
-    graficar_convergecia_N_ejemplo()
-    graficar_convergecia_M_ejemplo()
-    graficar_tiempos_ejecucion_M_ejemplo()
+    #graficar_convergecia_N_ejemplo()
+    #graficar_convergecia_M_ejemplo()
+    #graficar_tiempos_ejecucion_M_ejemplo()
     graficar_tiempos_ejecucion_N_ejemplo()
-    graficar_eficiencia_N_ejemplo()
-    graficar_deteccion_ejemplo_ejemplo()
+    #graficar_eficiencia_N_ejemplo()
+    #graficar_deteccion_ejemplo_ejemplo()
 
