@@ -285,7 +285,7 @@ def graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=15, N_alto=2000,
     return fig
 
 
-def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=3, file_name="eficiencia_error_tiempo"):
+def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=6, file_name="eficiencia_error_tiempo"):
     metodos = {
         "Estándar": vec_standard_monte_carlo,
         "Mejorado":vec_improved_monte_carlo
@@ -299,7 +299,7 @@ def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=
             t_reps = []
             err_reps = []
             for i in range(n_reps):
-                print(f"Graficando eficiencia N: Simulando N={N}, repeticion {i}. Método {nombre}.")
+                print(f"Graficando eficiencia N: Simulando N={N}, repeticion {i+1}. Método {nombre}.")
 
                 inicio = time.perf_counter()
                 prima = metodo(M, N, S, r, sigma, B, K, x, T)
