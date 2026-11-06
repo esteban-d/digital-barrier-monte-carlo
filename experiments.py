@@ -82,7 +82,6 @@ def graficar_deteccion_ejemplo_ejemplo():
 if __name__ == "__main__":
     np.random.seed(DEF_SEED)
 
-    calcular_prima_ejemplo()
     graficar_convergecia_N_ejemplo()
     graficar_convergecia_M_ejemplo()
     graficar_tiempos_ejecucion_M_ejemplo()
@@ -90,3 +89,4 @@ if __name__ == "__main__":
     graficar_eficiencia_ejemplo()
     graficar_deteccion_ejemplo_ejemplo()
 
+    calcular_prima_ejemplo()
