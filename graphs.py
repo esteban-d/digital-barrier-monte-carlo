@@ -70,7 +70,7 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, file_
                 color="red", label="Valor teórico")
     ax1.set_xlabel("Número de pasos (N)")
     ax1.set_ylabel("Prima")
-    ax1.title.set_text("Prima")
+
     ax1.set_xscale("log")
     #ax1.set_yscale("log")
     ax1.legend()
@@ -82,7 +82,7 @@ def graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, file_
     ax2.plot(Ns, err_mejorado, marker=".", label="Mejorado")
     ax2.set_xlabel("Número de pasos (N)")
     ax2.set_ylabel("Error absoluto")
-    ax2.title.set_text("Error")
+
     ax2.set_xscale("log")
     ax2.set_yscale("log")
     ax2.legend()
@@ -128,7 +128,7 @@ def graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, prima_teorica, n_rep
     c = media_err_mej[0] * np.sqrt(Ms[0])
     ax.plot(Ms, c/np.sqrt(Ms), "k--", label=r"Referencia $1/\sqrt{M}$")
 
-    ax.title.set_text(f"Error (N={N})")
+
     ax.set_xlabel("Número de simulaciones (M)")
     ax.set_ylabel("Error absoluto medio")
     ax.set_xscale("log")
@@ -276,7 +276,7 @@ def graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=15, N_alto=2000,
 
     ax.set_xlabel("Tiempo $t$")
     ax.set_ylabel("Precio del activo $S_t$")
-    ax.set_title("Detección del cruce de barrera: estándar vs. mejorado")
+
     ax.legend(fontsize=9, loc="lower right")
 
     fig.tight_layout()
@@ -324,7 +324,7 @@ def graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, prima_teorica, n_reps=
 
     ax.set_xlabel("Tiempo medio de ejecución (s)")
     ax.set_ylabel("Error absoluto medio")
-    ax.set_title(f"Error frente al tiempo de ejecución (M={M})")
+
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.legend()

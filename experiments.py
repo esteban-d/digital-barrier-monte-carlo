@@ -46,42 +46,43 @@ def calcular_prima_ejemplo():
         f"Error relativo Monte Carlo mejorado: {abs(price_improved - price_theoretical) / price_theoretical * 100:.4f}%")
 
 
-def graficar_convergecia_N_ejemplo(dots=20):
-    Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
-    fig = graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, V)
+def graficar_convergecia_N_ejemplo():
+    Ns = np.unique(np.geomspace(5, 1000, 20).astype(int))
+    graficar_convergencia_N(Ns, M, S, r, sigma, B, K, x, T, V)
     print("Gráfico convergecia_N generado")
 
-def graficar_convergecia_M_ejemplo(dots=10):
+def graficar_convergecia_M_ejemplo():
     Ms = np.unique(np.geomspace(1_000, 1_000_000, 10).astype(int))
-    fig = graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, V)
+    graficar_convergencia_M(Ms, N, S, r, sigma, B, K, x, T, V)
     print("Gráfico convergencia_M generado")
         
 
-def graficar_tiempos_ejecucion_M_ejemplo(dots=10):
+def graficar_tiempos_ejecucion_M_ejemplo():
     Ms = np.arange(1_000, 1_000_001, 100_000)
-    fig = graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T)
+    graficar_tiempos_ejecucion_M(Ms, N, S, r, sigma, B, K, x, T)
     print("Gráfico tiempos_de_ejecucion_M generado")
 
-def graficar_tiempos_ejecucion_N_ejemplo(dots=20): 
+def graficar_tiempos_ejecucion_N_ejemplo(): 
     Ns = np.arange(5, 1001, 50)
-    fig = graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T)
+    graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T)
     print("Gráfico tiempos_de_ejecucion_N generado")
 
 
-def graficar_eficiencia_ejemplo(dots=8):
-    Ns = np.unique(np.geomspace(5, 1000, dots).astype(int))
-    fig = graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, V)
+def graficar_eficiencia_ejemplo():
+    Ns = np.unique(np.geomspace(5, 1000, 8).astype(int))
+    graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, V)
     print("Gráfico eficiencia_N generado")
 
 
-def graficar_deteccion_ejemplo_ejemplo(dots=15):
-    fig = graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=dots, seed=22)
+def graficar_deteccion_ejemplo_ejemplo():
+    graficar_deteccion_ejemplo(S, r, sigma, B, T, dots=15, seed=22)
     print("Gráfico deteccion_ejemplo generado")
 
 
 if __name__ == "__main__":
     np.random.seed(DEF_SEED)
 
+    calcular_prima_ejemplo()
     graficar_convergecia_N_ejemplo()
     graficar_convergecia_M_ejemplo()
     graficar_tiempos_ejecucion_M_ejemplo()
