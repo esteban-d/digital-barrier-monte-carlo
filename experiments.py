@@ -87,7 +87,7 @@ def graficar_tiempos_ejecucion_N_ejemplo():
 
 def graficar_eficiencia_ejemplo():
     """
-    Grafica el error relativo de los métodos con respecto al tiempo de ejecución, para distintos valores de N.
+    Grafica el error absoluto medio de los métodos con respecto al tiempo de ejecución, para distintos valores de N.
     """
     Ns = np.unique(np.geomspace(5, 1000, 8).astype(int))
     graficar_eficiencia_N(Ns, M, S, r, sigma, B, K, x, T, V)

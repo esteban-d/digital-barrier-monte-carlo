@@ -206,10 +206,6 @@ def graficar_tiempos_ejecucion_N(Ns, M, S, r, sigma, B, K, x, T, n_reps=5, file_
             for i in range(n_reps):
                 print(f"Graficando tiempos de ejecución N: Simulando N={N}, repeticion {i+1}. Método {nombre}.")
                 inicio = time.perf_counter()
-                # Elegimos batch_size=4000 para evitar que el asignador de memoria
-                # genere saltos en el tiempo de ejecución
-                # que no reflejan la eficiencia del método.
-                # (Notar que el tamaño de las matrices disminuye con batch_size.)
                 metodo(M, N, S, r, sigma, B, K, x, T, batch_size=4000)
                 tiempos_M.append(time.perf_counter() - inicio)
 

@@ -8,11 +8,11 @@ from scipy.stats import norm
 def valor_exacto(S, r, sigma, B, K, X, T):
     """
     Calcula la prima de una opción digital cash-or-nothing down-and-out put utilizando la fórmula teórica 
-    de Rubistein y Reiner (1991).
+    de Rubinstein y Reiner (1991).
 
     Parámetros:
     S: float
-        Precio incial del subyacente.
+        Precio inicial del subyacente.
     r: float
         Tasa libre de riesgo.
     sigma: float
