@@ -1,3 +1,12 @@
+"""
+Este módulo contiene funciones para graficar la velocidad de convergencia y los tiempos de ejecución de los métodos de Monte Carlo estándar y mejorado, 
+y así comparar su eficiencia. También permite graficar un ejemplo de trayectoria que ilustra el funcionamiento del método mejorado y
+el sesgo que se introduce al no detectar cruces de barrera entre los puntos observados en el método estándar. 
+
+Los gráficos se almacenan en la carpeta "results" y los datos de los gráficos en la carpeta "tables".
+"""
+
+
 import time
 import numpy as np
 import matplotlib.pyplot as plt

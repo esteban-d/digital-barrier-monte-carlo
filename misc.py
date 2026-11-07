@@ -1,3 +1,9 @@
+"""
+Este módulo contiene funciones auxiliares para calcular la pendiente de los tiempos de ejecución de los métodos de Monte Carlo estándar y mejorado, 
+de la recta que mejor se ajusta a las mediciones por cuadrados mínimos. 
+"""
+
+
 import numpy as np
 
 

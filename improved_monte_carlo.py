@@ -1,9 +1,15 @@
+"""
+Este módulo contiene métodos de Monte Carlo mejorados con la técnica descripta en Nouri et al. (2016).
+Estos permiten valorar opciones cash-or-nothing down-and-out put
+"""
+
 import numpy as np
 
 
 def improved_monte_carlo(M, N, S, r, sigma, B, K, x, T):
     """
     Valora una opción digital cash-or-nothing down-and-out put mediante simulación de Monte Carlo estándar.
+    Tiene un bajo consumo de memoria, pero es considerablemente lento.
 
     Parámetros:
     M: int
@@ -60,8 +66,6 @@ def improved_monte_carlo(M, N, S, r, sigma, B, K, x, T):
 
     return sum_payoffs / M
 
-# p_n = np.exp(-2 * (S_prev - self.B) * (S_next - self.B) / (sigma**2 * S_prev**2 * delta_t))
-
 
 def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
 
@@ -93,6 +97,36 @@ def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
 
 
 def vec_improved_monte_carlo(M, N, S, r, sigma, B, K, x, T, batch_size=10000):
+    """
+    Versión vectorizada de improved_monte_carlo. Considerablemente más rápida que el método anterior,
+    pero el uso de memoria crece rápidamente con M y N. Se puede mitigar el crecimiento del uso de memoria 
+    respecto a M eligiendo un batch_size adecuado.
+
+    Parámetros:
+    M: int
+        Cantidad de trayectorias a simular.
+    N: int
+        Cantidad de saltos de tiempo en cada trayectoria.
+    S: float
+        Precio incial del subyacente.
+    r: float
+        Tasa libre de riesgo.
+    sigma: float
+        Volatilidad del subyacente.
+    B: float
+        Barrera de la opción.
+    K: float
+        Strike de la opción.
+    x: float
+        Pago de la opción.
+    T: float
+        Tiempo hasta la expiración.
+    batch_size: int
+        Tamaño del lote.
+
+    Retorna: float
+        Prima estimada de la opción. 
+    """
 
     delta_t = T / N
     sum_payoffs = 0

@@ -1,16 +1,8 @@
 """
-Este módulo métodos de Monte Carlo estándar para valoración de una opción digital con barrera simple cash-or-nothing. 
-Específicamente, una opción put con barrera down-and-out.
-
-Contiene dos implementaciones: 
-* Monte Carlo estándar (standard_monte_carlo)
-* Monte Carlo estándar vectorizado (vec_standard_monte_carlo)
-
-Se incluye también la función theoretical_price, que calcula el precio teórico de una opción digital del mismo tipo.
+Este módulo contiene métodos de Monte Carlo para la valoración de opciones cash-or-nothing down-and-out put 
 """
 
 import numpy as np
-
 
 
 def standard_monte_carlo(M, N, S, r, sigma, B, K, x, T):
@@ -62,9 +54,6 @@ def standard_monte_carlo(M, N, S, r, sigma, B, K, x, T):
 
 
 def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
-    """
-    Función auxiliar de vec_standard_monte_carlo para simular un batch de trayectorias.
-    """
     Z = np.random.normal(size=(M_batch, N))
 
     factors = np.exp((r - 0.5 * sigma ** 2) * delta_t +
@@ -86,8 +75,8 @@ def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
 
 def vec_standard_monte_carlo(M, N, S, r, sigma, B, K, x, T, batch_size=10000):
     """
-    Versión vectorizada de standard_monte_carlo. Considerablemente más rápido que el método anterior,
-    pero el uso de memoria crece rápidamente con M y N. Se puede mitigar el crecimiento de uso de memoria 
+    Versión vectorizada de standard_monte_carlo. Considerablemente más rápida que el método anterior,
+    pero el uso de memoria crece rápidamente con M y N. Se puede mitigar el crecimiento del uso de memoria 
     respecto a M eligiendo un batch_size adecuado.
 
     Parámetros:
