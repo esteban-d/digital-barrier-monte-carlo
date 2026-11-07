@@ -75,7 +75,7 @@ def process_batch(M_batch, N, S, r, sigma, B, K, x, delta_t):
 
 def vec_standard_monte_carlo(M, N, S, r, sigma, B, K, x, T, batch_size=10000):
     """
-    Versión vectorizada de improved_monte_carlo. Considerablemente más rápida que el método anterior,
+    Versión vectorizada de vec_standard_monte_carlo. Considerablemente más rápida que el método anterior,
     pero el uso de memoria crece rápidamente con M y N, aunque acotado por batch_size. 
     Se puede mitigar el crecimiento del uso de memoria respecto a M eligiendo un batch_size adecuado.
 
