@@ -7,13 +7,13 @@ de convergencia y error frente a la simulación de Monte Carlo estándar y la f�
 ## Ejecución
 
 Si bien se recomienda consultar directamente las carpetas results y tables para obtener los gráficos y las mediciones directamente, es posible
-reproducir estos resultados ejecutando el siguiente comando desde la raiz del repositorio. 
+reproducir estos resultados ejecutando el siguiente comando desde la raíz del repositorio. 
 
 ```bash
 python experiments.py
 ```
 
-Los tiempos de ejecución pueden variar según el harware, el sistema operativo y la carga del sistema.
+Los tiempos de ejecución pueden variar según el hardware, el sistema operativo y la carga del sistema.
 
 ## Autores
 
